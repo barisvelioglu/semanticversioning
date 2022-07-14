@@ -1,0 +1,20 @@
+#!/bin/bash
+# Build generic golang application.
+#
+# Example:
+#	build-go cmd/server example-server pkg.version.Version
+set -e
+
+if [ "$#" -ne 3 ]; then
+	echo "Usage: $0 <package> <target_binary> <version_var>"
+	exit 1
+fi
+
+readonly package="$1"
+readonly target_binary="$2"
+readonly version_var="$3"
+
+readonly bin_dir="$CI_PROJECT_DIR/bin/"
+
+mkdir -p "$bin_dir"
+go build -ldflags="-X $version_var=$CI_COMMIT_SHA" -o "$bin_dir/$target_binary" "$package"
